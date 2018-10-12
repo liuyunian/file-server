@@ -1,0 +1,25 @@
+{
+  "name": "anydoor",
+  "version": "1.0.0",
+  "description": "file server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liuyunian/anydoor.git"
+  },
+  "keywords": [
+    "liuyunian"
+  ],
+  "author": "lyn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liuyunian/anydoor/issues"
+  },
+  "homepage": "https://github.com/liuyunian/anydoor#readme",
+  "dependencies": {
+    "handlebars": "^4.0.12"
+  }
+}
