@@ -1,8 +1,12 @@
+/* 扩展模块 */
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
 const Handlebars = require('handlebars');
+
+/* 自定义模块 */
 const config = require('./config/default_config.js');
+const mime = require('./help/MIME.js');
 
 const tplPath = path.join(__dirname, './template/dir.tpl');
 const source = fs.readFileSync(tplPath, 'UTF-8'); //除了require时可以采用相对路径，其他情况尽量采用绝对路径。
@@ -15,17 +19,18 @@ const server = http.createServer(function(req, res){
 
     fs.stat(filePath, function(err,stats){
         if(err){
-            res.writeHead(404,{"Content-Type": "text/plain"});
+            res.writeHead(404, {'Content-Type': 'text/plain'});
             res.end('文件或者目录没找到');
             return;
         }
         else{
             if(stats.isFile()){
-                res.writeHead(200,{"Content-Type": "text/plain"});
+                const ContentType = mime(filePath);
+                res.writeHead(200,{"Content-Type": ContentType});
                 fs.createReadStream(filePath).pipe(res);
             }
             else if(stats.isDirectory()){
-                fs.readdir(filePath,function(err,files){
+                fs.readdir(filePath,function(err, files){
                     res.writeHead(200,{"Content-Type": "text/html"});
                     const data = {
                         title: path.basename(filePath),
