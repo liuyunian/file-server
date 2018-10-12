@@ -4,10 +4,14 @@ const fs = require('fs');
 const Handlebars = require('handlebars');
 const config = require('./config/default_config.js');
 
-const source = fs.readFileSync('');
+const tplPath = path.join(__dirname, './template/dir.tpl');
+const source = fs.readFileSync(tplPath, 'UTF-8'); //除了require时可以采用相对路径，其他情况尽量采用绝对路径。
+const template = Handlebars.compile(source);
+
+
 const server = http.createServer(function(req, res){
 
-    const filePath = path.join(config.root, req.url); //文件的路径
+    const filePath = path.join(config.root, req.url); //文件的路径:绝对路径
 
     fs.stat(filePath, function(err,stats){
         if(err){
@@ -19,10 +23,16 @@ const server = http.createServer(function(req, res){
             if(stats.isFile()){
                 res.writeHead(200,{"Content-Type": "text/plain"});
                 fs.createReadStream(filePath).pipe(res);
-            }else if(stats.isDirectory()){
+            }
+            else if(stats.isDirectory()){
                 fs.readdir(filePath,function(err,files){
-                    res.writeHead(200,{"Content-Type": "text/plain"});
-                    res.end(files.join(','));
+                    res.writeHead(200,{"Content-Type": "text/html"});
+                    const data = {
+                        title: path.basename(filePath),
+                        dir: path.relative(config.root, filePath),
+                        files: files
+                    };
+                    res.end(template(data));
                 });
             }
         }
