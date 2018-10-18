@@ -26,7 +26,7 @@
         <tr>
             <td><a href="{{../dir}}/{{this.name}}">{{this.name}}</a></td>
             <td>{{this.author}}</td>
-            <td>{{this.size}}KB</td>
+            <td>{{this.size}}</td>
             <td>{{this.time}}</td>
         </tr>
         {{/each}}

@@ -1,6 +1,8 @@
+/* 扩展模块 */
 const yargs = require('yargs');
 
-const Server = require('./app.js');
+/* 自定义模块 */
+const Server = require('./server.js');
 
 const argv = yargs
     .usage('anywhere [options]')
@@ -24,5 +26,5 @@ const argv = yargs
     .help()
     .argv;
 
-const server = new Server(argv);
+const server = new Server(argv); //创建一个Server实例
 server.start();
