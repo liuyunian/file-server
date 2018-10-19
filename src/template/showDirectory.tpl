@@ -12,6 +12,16 @@
             justify-content: center
         }
     </style>
+
+    <script>
+        function gotoWikiMainPage(){
+            window.location.href="http://10.15.5.93:8000";
+        }
+
+        function downLoad(){
+            alert("全部下载");
+        }
+    </script>
 </head>
 
 <body>
@@ -35,6 +45,15 @@
     <form action = "/upload" method = "post" enctype = "multipart/form-data">
         <input type = "file" name = 'file'/>
         <input type = "submit" value = "上传"/>
+    </form>
+
+    <button type = "button" onclick = "gotoWikiMainPage()">wiki首页</button>
+
+    <button type = "button" onclick = "downLoad()">全部下载</button>
+
+    <form action = "/newFolder" method = "post">
+        <input type = "text" placeholder = "文件夹名称" name = "folder"/>
+        <input type = "submit" value = "新建文件夹"/>
     </form>
 </body>
 </html>

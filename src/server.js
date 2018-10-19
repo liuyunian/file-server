@@ -8,6 +8,7 @@ const Handlebars = require('handlebars'); //模版引擎
 const defaultConfig = require('./config/default_config.js');
 const mime = require('./help/MIME.js');
 const dealUpload = require('./upload.js');
+const newFolder = require('./newfolder.js');
 
 const templatePath = path.join(__dirname, './template/showDirectory.tpl'); //除了require时可以采用相对路径，其他情况尽量采用绝对路径。
 const source = fs.readFileSync(templatePath); //同步保证了首先将模板读入内存
@@ -23,6 +24,9 @@ class Server {
         const server = http.createServer((req, res) => {
             if (req.url == '/upload' && req.method.toLowerCase() === 'post') {  // 处理上传的文件
                 dealUpload(req, res, this.currentFilePath, this.config.root);
+            }
+            else if(req.url == '/newFolder' && req.method.toLowerCase() === 'post'){
+                newFolder(req, res, this.currentFilePath, this.config.root);
             }
             else{
                 this.currentFilePath = path.join(this.config.root, decodeURI(req.url)); //文件的路径:绝对路径
