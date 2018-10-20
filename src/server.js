@@ -2,6 +2,8 @@
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
+const url = require('url');
+const querystring = require('querystring');
 const Handlebars = require('handlebars'); //模版引擎
 
 /* 自定义模块 */
@@ -9,6 +11,7 @@ const defaultConfig = require('./config/default_config.js');
 const mime = require('./help/MIME.js');
 const dealUpload = require('./upload.js');
 const newFolder = require('./newfolder.js');
+const download = require('./download');
 
 const templatePath = path.join(__dirname, './template/showDirectory.tpl'); //除了require时可以采用相对路径，其他情况尽量采用绝对路径。
 const source = fs.readFileSync(templatePath); //同步保证了首先将模板读入内存
@@ -17,20 +20,31 @@ const template = Handlebars.compile(source.toString());
 class Server {
     constructor(userConfig) { 
         this.config = Object.assign({}, defaultConfig, userConfig); //合并默认配置和用户输入的配置
-        this.currentFilePath = this.config.root; //默认的当前文件路径
+        this.currentPath = this.config.root; //默认的当前文件路径
     }
 
     start(){ 
         const server = http.createServer((req, res) => {
-            if (req.url == '/upload' && req.method.toLowerCase() === 'post') {  // 处理上传的文件
-                dealUpload(req, res, this.currentFilePath, this.config.root);
+            const relativeURL = req.url.split('?');
+            if (req.method.toLowerCase() === 'post' && relativeURL[0] == '/upload') {  // 处理上传的文件
+                dealUpload(req, res, this.currentPath, this.config.root);
             }
-            else if(req.url == '/newFolder' && req.method.toLowerCase() === 'post'){
-                newFolder(req, res, this.currentFilePath, this.config.root);
+            else if(req.method.toLowerCase() === 'post' && relativeURL[0] == '/newFolder'){ // 处理新建文件夹
+                newFolder(req, res, this.currentPath, this.config.root);
+            }
+            else if(req.method.toLowerCase() === 'get' && relativeURL[0] == '/downloadSingle'){
+                const query = querystring.parse(url.parse(req.url).query);
+                const downFileName = query.name;
+                const downFilePath = path.join(this.currentPath, downFileName); //目录下要下载文件的路径
+                download(res, downFilePath, downFileName);
+            }
+            else if(req.method.toLowerCase() === 'post' && relativeURL[0] == '/downloadAll'){
+                const currentDirectoryName = path.basename(this.currentPath);
+                download(res, this.currentPath, currentDirectoryName);
             }
             else{
-                this.currentFilePath = path.join(this.config.root, decodeURI(req.url)); //文件的路径:绝对路径
-                fs.stat(this.currentFilePath, (err, currentFileStats) => {
+                this.currentPath = path.join(this.config.root, decodeURI(relativeURL[0])); //文件的路径:绝对路径
+                fs.stat(this.currentPath, (err, currentFileStats) => {
                     if (err) {
                         res.writeHead(404, { 'Content-Type': 'text/plain;charset=UTF-8' });
                         res.end('文件或者目录没找到');
@@ -38,12 +52,12 @@ class Server {
                     }
                     else {
                         if (currentFileStats.isFile()) { //要显示文件内容
-                            const ContentType = mime(this.currentFilePath);
+                            const ContentType = mime(this.currentPath);
                             res.writeHead(200, { "Content-Type": ContentType });
-                            fs.createReadStream(this.currentFilePath).pipe(res);
+                            fs.createReadStream(this.currentPath).pipe(res);
                         }
                         else if (currentFileStats.isDirectory()) { //要列出文件下的信息
-                            fs.readdir(this.currentFilePath, (err, subFileNameArray) => {
+                            fs.readdir(this.currentPath, (err, subFileNameArray) => {
                                 if(err){
                                     console.error(err);
                                     return;
@@ -54,8 +68,8 @@ class Server {
                                         subFileInformationArray.push(this.getSubFileInformation(subFileName));
                                     }
 
-                                    const pageTitle = path.basename(this.currentFilePath); //页面的标题
-                                    const subFileDir = path.relative(this.config.root, this.currentFilePath); //文件路径
+                                    const pageTitle = path.basename(this.currentPath); //页面的标题
+                                    const subFileDir = path.relative(this.config.root, this.currentPath); //文件路径
 
                                     const templateData = {
                                         title: pageTitle,
@@ -80,7 +94,7 @@ class Server {
     }
 
     getSubFileInformation(subFileName){
-        const subFilePath = path.join(this.currentFilePath, subFileName); //获取目录下子文件的绝对路径      
+        const subFilePath = path.join(this.currentPath, subFileName); //获取目录下子文件的绝对路径      
         const subFileStats = fs.statSync(subFilePath); //获取文件信息
 
         const fileSize = this.getFileSize(subFileStats.size);

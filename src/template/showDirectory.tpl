@@ -12,16 +12,6 @@
             justify-content: center
         }
     </style>
-
-    <script>
-        function gotoWikiMainPage(){
-            window.location.href="http://10.15.5.93:8000";
-        }
-
-        function downLoad(){
-            alert("全部下载");
-        }
-    </script>
 </head>
 
 <body>
@@ -31,6 +21,7 @@
             <th>上传者</th>
             <th>文件大小</th>
             <th>上传日期</th>
+            <th>下载</th>
         </tr>
         {{#each filesInformation}}
         <tr>
@@ -38,22 +29,26 @@
             <td>{{this.author}}</td>
             <td>{{this.size}}</td>
             <td>{{this.time}}</td>
+            <td><a href="/downloadSingle?name={{this.name}}">下载</a></td>
         </tr>
         {{/each}}
     </table>
-
+    <br/>
+    <br/>
     <form action = "/upload" method = "post" enctype = "multipart/form-data">
         <input type = "file" name = 'file'/>
         <input type = "submit" value = "上传"/>
     </form>
-
-    <button type = "button" onclick = "gotoWikiMainPage()">wiki首页</button>
-
-    <button type = "button" onclick = "downLoad()">全部下载</button>
-
+    <br/>
     <form action = "/newFolder" method = "post">
         <input type = "text" placeholder = "文件夹名称" name = "folder"/>
         <input type = "submit" value = "新建文件夹"/>
     </form>
+    <br/>
+    <form action = "/downloadAll" method = "post">
+        <input type = "submit" value = "全部下载"/>
+    </form>
+    <br/>
+    <a href="http://10.15.5.93:8000">Wiki首页</a>
 </body>
 </html>

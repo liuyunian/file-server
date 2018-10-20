@@ -13,7 +13,6 @@ function newFolder(req, res, filePath, rootPath){
 
         let subString = postData.split('='); 
         const folderName = decodeURI(subString[1]); //拿到folder name
-        console.log(folderName);
 
         const newFolderPath = path.join(filePath, folderName); //构建新文件夹的路径
         fs.mkdirSync(newFolderPath); //同步方式创建新文件夹，是否能改成异步
