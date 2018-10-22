@@ -43,7 +43,8 @@ class Server {
                 download(res, this.currentPath, currentDirectoryName);
             }
             else{
-                this.currentPath = path.join(this.config.root, decodeURI(relativeURL[0])); //文件的路径:绝对路径
+                this.currentPath = path.join(this.config.root, decodeURI(relativeURL[0])); //记录当前的文件路径
+                console.log(this.currentPath);
                 fs.stat(this.currentPath, (err, currentFileStats) => {
                     if (err) {
                         res.writeHead(404, { 'Content-Type': 'text/plain;charset=UTF-8' });
@@ -77,7 +78,10 @@ class Server {
                                         filesInformation: subFileInformationArray
                                     };
         
-                                    res.writeHead(200, { "Content-Type": "text/html;charset=UTF-8" });
+                                    res.writeHead(200, {
+                                        "Content-Type": "text/html;charset=UTF-8",
+                                        "Cache-Control": "no-store"
+                                    });
                                     res.end(template(templateData));
                                 } 
                             });
