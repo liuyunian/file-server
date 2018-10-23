@@ -1,6 +1,6 @@
 {
-  "name": "anydoor",
-  "version": "1.0.0",
+  "name": "file-server",
+  "version": "1.4.1",
   "description": "file server",
   "main": "src/app.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/liuyunian/anydoor.git"
+    "url": "git+https://github.com/liuyunian/file-server.git"
   },
   "keywords": [
     "liuyunian"
@@ -16,9 +16,9 @@
   "author": "lyn",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/liuyunian/anydoor/issues"
+    "url": "https://github.com/liuyunian/file-server/issues"
   },
-  "homepage": "https://github.com/liuyunian/anydoor#readme",
+  "homepage": "https://github.com/liuyunian/file-server#readme",
   "dependencies": {
     "archiver": "^3.0.0",
     "formidable": "^1.2.1",
