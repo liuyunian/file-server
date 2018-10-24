@@ -17,7 +17,7 @@ function newFolder(req, res, filePath, rootPath){
         const newFolderPath = path.join(filePath, folderName); //构建新文件夹的路径
         fs.mkdirSync(newFolderPath); //同步方式创建新文件夹，是否能改成异步
         
-        const relativePath = path.relative(rootPath, filePath);
+        const relativePath = encodeURI(path.relative(rootPath, filePath));
         res.writeHead(302, {'Location': `/${relativePath}`});
         res.end();
     });

@@ -24,6 +24,13 @@
             <th>上传日期</th>
             <th>下载</th>
         </tr>
+        <tr>
+            <td><a href="{{lastDir}}">..</a></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
         {{#each filesInformation}}
         <tr>
             <td><a href="{{../dir}}/{{this.name}}">{{this.name}}</a></td>

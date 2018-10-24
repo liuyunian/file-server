@@ -17,9 +17,8 @@ function dealUpload(req, res, filePath, rootPath){
             const uploadFileOldName = files.file.path;
             fs.renameSync(uploadFileOldName, uploadFileNewName); //如果不重新命名的话，名字是随机的
     
-            const relativePath = path.relative(rootPath, filePath);
-            console.log(relativePath);
-            res.writeHead(302, {'Location': `/${relativePath}`}); 
+            const relativePath = encodeURI(path.relative(rootPath, filePath));
+            res.writeHead(302, {'Location': `/${relativePath}`});
             res.end();
         }
     });

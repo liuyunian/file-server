@@ -44,7 +44,6 @@ class Server {
             }
             else{
                 this.currentPath = path.join(this.config.root, decodeURI(relativeURL[0])); //记录当前的文件路径
-                console.log(this.currentPath);
                 fs.stat(this.currentPath, (err, currentFileStats) => {
                     if (err) {
                         res.writeHead(404, { 'Content-Type': 'text/plain;charset=UTF-8' });
@@ -71,9 +70,11 @@ class Server {
 
                                     const pageTitle = path.basename(this.currentPath); //页面的标题
                                     const subFileDir = path.relative(this.config.root, this.currentPath); //文件路径
+                                    const lastFileDir = path.dirname(subFileDir);
 
                                     const templateData = {
                                         title: pageTitle,
+                                        lastDir: lastFileDir ? `/${lastFileDir}` : '',
                                         dir: subFileDir ? `/${subFileDir}` : '',
                                         filesInformation: subFileInformationArray
                                     };
