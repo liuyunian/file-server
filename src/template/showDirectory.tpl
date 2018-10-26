@@ -56,7 +56,5 @@
     <form action = "/downloadAll" method = "post">
         <input type = "submit" value = "全部下载"/>
     </form>
-    <br/>
-    <a href="http://10.15.5.93:8000">Wiki首页</a>
 </body>
 </html>
