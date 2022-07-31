@@ -7,6 +7,8 @@
 
 ## 脚本命令
 ```
+npm install # 安装依赖
+
 npm start # 默认方式运行，主机：127.0.0.1；端口：3333；根目录：file-server目录
 
 npm start -- -p 8080 # 设置端口号为8080
@@ -86,4 +88,10 @@ npm start -- -d /usr # 设置根目录为/usr
 ```
 简单重构，用Promise和async/await改写回调函数
 修复bug：文件显示是中文乱码
+```
+
+#### v1.5.3
+```
+优化代码格式
+更新npm依赖
 ```

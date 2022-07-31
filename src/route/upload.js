@@ -1,43 +1,40 @@
 /* 扩展模块 */
-const formidable = require('formidable'); //上传模块
 const fs = require('fs');
 const path = require('path');
-const promisify = require('util').promisify;
+const util = require('util');
+const formidable = require('formidable'); // 上传模块
 
-const fileRename = promisify(fs.rename);
+const rename = util.promisify(fs.rename);
 
-function dealUpload(req, res, filePath, rootPath){
-    const form = new formidable.IncomingForm(); //创建formidable.IncomingForm对象
+function upload(req, res, filePath, rootPath){
+  const form = new formidable.IncomingForm();
 
-    form.keepExtensions = true; //保持原有的扩展名
-    form.uploadDir = `${filePath}`; //修改成指定的目录
-    form.parse(req, (err, Fields, files) => { //这个异步回调不容易进行改造
-        if(err){
-            console.error(Exception);
-            res.writeHead(500, {'Content-Type': 'text/plain'});
-            res.end('服务器出错了！');
-        }
-        else{
-            const uploadFileOldName = files.file.path;
-            const uploadFileNewName = path.join(filePath, files.file.name);
-            rename(uploadFileOldName, uploadFileNewName); //如果不重新命名的话，名字是随机的
-    
-            const relativePath = encodeURI(path.relative(rootPath, filePath));
-            res.writeHead(302, {'Location': `/${relativePath}`});
-            res.end();
-        }
-    });
+  form.keepExtensions = true;
+  form.uploadDir = `${filePath}`;
+  form.parse(req, (err, Fields, files) => {
+    if (err) {
+      res.writeHead(500, {'Content-Type': 'text/plain;charset=UTF-8'});
+      res.end('服务器出错了！');
+    } else{
+      const oldName = files.file.path;
+      const newName = path.join(filePath, files.file.name);
+      Rename(oldName, newName, res);
+
+      const relativePath = encodeURI(path.relative(rootPath, filePath));
+      res.writeHead(302, {'Location': `/${relativePath}`});
+      res.end();
+    }
+  });
 }
 
-async function rename(oldName, newName){
-    try{
-        await fileRename(oldName, newName);
-    }
-    catch(Exception){
-        console.error(Exception);
-        res.writeHead(500, {'Content-Type': 'text/plain'});
-        res.end('服务器出错了！');
-    }
+async function Rename(oldName, newName, res){
+  try{
+    await rename(oldName, newName);
+  }
+  catch(Exception){
+    res.writeHead(500, {'Content-Type': 'text/plain;charset=UTF-8'});
+    res.end('服务器出错了！');
+  }
 }
 
-module.exports = dealUpload;
+module.exports = upload;
